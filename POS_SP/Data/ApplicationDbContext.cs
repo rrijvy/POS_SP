@@ -22,5 +22,19 @@ namespace POS_SP.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        public DbSet<POS_SP.Models.Brand> Brand { get; set; }
+
+        public DbSet<POS_SP.Models.Category> Category { get; set; }
+
+        public DbSet<POS_SP.Models.Product> Product { get; set; }
+
+        public DbSet<POS_SP.Models.SubCategory> SubCategory { get; set; }
+
+        public DbSet<POS_SP.Models.Sale> Sale { get; set; }
+
+        public DbSet<POS_SP.Models.Purchase> Purchase { get; set; }
+
+        public DbSet<POS_SP.Models.Supplier> Supplier { get; set; }
     }
 }

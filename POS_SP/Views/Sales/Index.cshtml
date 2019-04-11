@@ -1,0 +1,114 @@
+﻿@model IEnumerable<POS_SP.Models.Sale>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderRefNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SalesDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TaxAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TaxPercent)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VatAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VatPercent)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DiscountAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DiscountPercent)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaymentType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaymentAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DueAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalAmount)
+                </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderRefNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalesDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaxAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaxPercent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VatAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VatPercent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiscountAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiscountPercent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.Address1)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewData["Title"] = "DateWisePurchaseReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="alert alert-info">Date Wise Sales Report</h2>
+<div class="row">
+    <div class="col-md-12">
+        <form class="form-horizontal" action="GetDateWisePurchaseReport" method="post">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label col-sm-3">From Date:</label>
+                    <div class="col-sm-8">
+                        <input type="date" name="fromDate" class="form-control dateTimeNow" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label col-sm-3">To Date:</label>
+                    <div class="col-sm-8">
+                        <input type="date" name="toDate" class="form-control dateTimeNow" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12"><hr /></div>
+            <div class="col-md-12"><button type="submit" class="btn btn-primary col-md-offset-5">Show Report</button></div>
+        </form>
+    </div>
+</div>

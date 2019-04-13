@@ -23,18 +23,30 @@ namespace POS_SP.Data
             // Add your customizations after calling base.OnModelCreating(builder);
         }
 
-        public DbSet<POS_SP.Models.Brand> Brand { get; set; }
+        public DbSet<Brand> Brands { get; set; }
 
-        public DbSet<POS_SP.Models.Category> Category { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
-        public DbSet<POS_SP.Models.Product> Product { get; set; }
+        public DbSet<Product> Products { get; set; }
 
-        public DbSet<POS_SP.Models.SubCategory> SubCategory { get; set; }
+        public DbSet<SubCategory> SubCategories { get; set; }
 
-        public DbSet<POS_SP.Models.Sale> Sale { get; set; }
+        public DbSet<Sale> Sales { get; set; }
 
-        public DbSet<POS_SP.Models.Purchase> Purchase { get; set; }
+        public DbSet<SalesDetail> SalesDetails { get; set; }
 
-        public DbSet<POS_SP.Models.Supplier> Supplier { get; set; }
+        public DbSet<InstallmentSchedulePayment> InstallmentSchedulePayments { get; set; }
+
+        public DbSet<Purchase> Purchases { get; set; }
+
+        public DbSet<PurchaseDetail> PurchaseDetails { get; set; }
+
+        public DbSet<Supplier> Suppliers { get; set; }
+
+        public DbSet<Customer> Customers { get; set; }    
+        
+        public DbSet<Stock> Stocks { get; set; }
+
+        public DbSet<StockDetail> StockDetails { get; set; }
     }
 }

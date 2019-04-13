@@ -39,6 +39,12 @@ namespace POS_SP.Models
         [Display(Name = "Payment Type")]
         public string PaymentType { get; set; }
 
+        [Display(Name = "Down Payment")]
+        public double DownPayment { get; set; }
+
+        [Display(Name ="Installment Period")]
+        public int InstallmentPeriod { get; set; }
+
         [Display(Name = "Payment Amount")]
         public double PaymentAmount { get; set; }
 

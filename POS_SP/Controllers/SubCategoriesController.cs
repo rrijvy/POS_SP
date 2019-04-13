@@ -20,7 +20,7 @@ namespace POS_SP.Controllers
         // GET: SubCategories
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.SubCategory.Include(s => s.Category);
+            var applicationDbContext = _context.SubCategories.Include(s => s.Category);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -32,7 +32,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var subCategory = await _context.SubCategory
+            var subCategory = await _context.SubCategories
                 .Include(s => s.Category)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (subCategory == null)
@@ -46,7 +46,7 @@ namespace POS_SP.Controllers
         // GET: SubCategories/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
@@ -63,7 +63,7 @@ namespace POS_SP.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", subCategory.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", subCategory.CategoryId);
             return View(subCategory);
         }
 
@@ -75,12 +75,12 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var subCategory = await _context.SubCategory.SingleOrDefaultAsync(m => m.Id == id);
+            var subCategory = await _context.SubCategories.SingleOrDefaultAsync(m => m.Id == id);
             if (subCategory == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", subCategory.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", subCategory.CategoryId);
             return View(subCategory);
         }
 
@@ -116,7 +116,7 @@ namespace POS_SP.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", subCategory.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", subCategory.CategoryId);
             return View(subCategory);
         }
 
@@ -128,7 +128,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var subCategory = await _context.SubCategory
+            var subCategory = await _context.SubCategories
                 .Include(s => s.Category)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (subCategory == null)
@@ -144,15 +144,15 @@ namespace POS_SP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var subCategory = await _context.SubCategory.SingleOrDefaultAsync(m => m.Id == id);
-            _context.SubCategory.Remove(subCategory);
+            var subCategory = await _context.SubCategories.SingleOrDefaultAsync(m => m.Id == id);
+            _context.SubCategories.Remove(subCategory);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SubCategoryExists(int id)
         {
-            return _context.SubCategory.Any(e => e.Id == id);
+            return _context.SubCategories.Any(e => e.Id == id);
         }
     }
 }

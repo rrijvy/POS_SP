@@ -1,98 +1,271 @@
-﻿@model POS_SP.Models.Sale
+﻿@model SalesViewModel
 
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create</h2>
-
-<h4>Sale</h4>
-<hr />
+<h2 class="alert alert-info">Create Sale</h2>
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="OrderNumber" class="control-label"></label>
-                <input asp-for="OrderNumber" class="form-control" />
-                <span asp-validation-for="OrderNumber" class="text-danger"></span>
+    <div class="col-md-12">
+        <form id="salesForm" class="form-horizontal" action="Create" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Sale.OrderRefNo" class="control-label col-sm-4"></label>
+                        <div class="col-sm-7">
+                            <input id="orderNumber" name="OrderRefNo" type="number" asp-for="Sale.OrderRefNo" class="form-control" />
+                            <span asp-validation-for="Sale.OrderRefNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Sale.CustomerId" class="control-label col-sm-4"></label>
+                        <div class="col-sm-7">
+                            <select id="clientId" asp-for="Sale.CustomerId" class="form-control" asp-items="ViewBag.CustomerId">
+                                <option value="0">Select Client...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Sale.SalesDate" class="control-label col-sm-4"></label>
+                        <div class="col-sm-7">
+                            <input id="salesDate" type="date" asp-for="Sale.SalesDate" class="form-control dateTimeNow" />
+                            <span asp-validation-for="Sale.SalesDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="OrderRefNo" class="control-label"></label>
-                <input asp-for="OrderRefNo" class="form-control" />
-                <span asp-validation-for="OrderRefNo" class="text-danger"></span>
+            <hr />
+            <table id="table" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Sub Category</th>
+                        <th>Brand</th>
+                        <th>Product</th>
+                        <th>Unit Price</th>
+                        <th>Unit</th>
+                        <th>Available Quantity</th>
+                        <th>Quantity</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select id="categoryId" class="form-control" asp-items="ViewBag.CategoryId">
+                                <option value="0">Select Category...</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="subCategoryId" class="form-control">
+                                <option value="0">Select Sub Category...</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="brandId" class="form-control">
+                                <option value="0">Select Brand...</option>
+                            </select>
+                        </td>
+                        <td class="col-md-2">
+                            <select id="productId" asp-for="SalesDetail.ProductId" class="form-control">
+                                <option value="0">Select Product...</option>
+                            </select>
+                        </td>
+                        <td class="col-md-1">
+                            <input id="unitPrice" asp-for="SalesDetail.UnitPrice" class="form-control" />
+                        </td>
+                        <td class="col-md-1">
+                            <input id="uom" asp-for="SalesDetail.UOM" class="form-control" />
+                        </td>
+                        <td class="col-md-1">
+                            <input id="availableQuantity" class="form-control" />
+                        </td>
+                        <td class="col-md-1">
+                            <input id="quantity" asp-for="SalesDetail.Quantity" class="form-control" />
+                        </td>
+                        <td>
+                            <button id="addProduct" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr />
+            <table id="productTable" class="table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Category</th>
+                        <th>Sub Category</th>
+                        <th>Brand</th>
+                        <th>Product</th>
+                        <th>Unit Price</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <hr />
+            <div class="col-md-4 col-md-offset-8">
+                <p class="col-sm-9"><b>Sub total amount</b></p>
+                <p id="subTotalAmount" class="col-sm-3">0.00</p>
             </div>
-            <div class="form-group">
-                <label asp-for="SalesDate" class="control-label"></label>
-                <input asp-for="SalesDate" class="form-control" />
-                <span asp-validation-for="SalesDate" class="text-danger"></span>
+            <div class="col-md-12"><hr /></div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Sale.TaxPercent" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="taxPercent" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TaxAmount" class="control-label"></label>
-                <input asp-for="TaxAmount" class="form-control" />
-                <span asp-validation-for="TaxAmount" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Sale.TaxAmount" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="taxTaka" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">BDT</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TaxPercent" class="control-label"></label>
-                <input asp-for="TaxPercent" class="form-control" />
-                <span asp-validation-for="TaxPercent" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Sale.VatPercent" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="vatPercent" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="VatAmount" class="control-label"></label>
-                <input asp-for="VatAmount" class="form-control" />
-                <span asp-validation-for="VatAmount" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Sale.VatAmount" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="vatTaka" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">BDT</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="VatPercent" class="control-label"></label>
-                <input asp-for="VatPercent" class="form-control" />
-                <span asp-validation-for="VatPercent" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Sale.DiscountPercent" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="discountPercent" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="DiscountAmount" class="control-label"></label>
-                <input asp-for="DiscountAmount" class="form-control" />
-                <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Sale.DiscountAmount" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="discountTaka" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">BDT</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="DiscountPercent" class="control-label"></label>
-                <input asp-for="DiscountPercent" class="form-control" />
-                <span asp-validation-for="DiscountPercent" class="text-danger"></span>
+            <div class="col-md-12"><hr /></div>
+            <div class="col-md-4 col-md-offset-8">
+                <p class="col-sm-9"><b>Total amount</b></p>
+                <p id="totalAmount" class="col-sm-3">0.00</p>
             </div>
-            <div class="form-group">
-                <label asp-for="PaymentType" class="control-label"></label>
-                <input asp-for="PaymentType" class="form-control" />
-                <span asp-validation-for="PaymentType" class="text-danger"></span>
+            <div class="col-md-12"><hr /></div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Sale.PaymentType" class="control-label col-sm-4"></label>
+                    <div class="col-sm-7">
+                        <select class="form-control" id="paymentType" asp-for="Sale.PaymentType" asp-items="Html.GetEnumSelectList<PaymentTypes>()"></select>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="PaymentAmount" class="control-label"></label>
-                <input asp-for="PaymentAmount" class="form-control" />
-                <span asp-validation-for="PaymentAmount" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group" id="paymentAmountGroup">
+                    <label asp-for="Sale.PaymentAmount" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="paymentAmount" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">BDT</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" id="downPaymentAmountGroup" style="display:none">
+                    <label asp-for="Sale.DownPayment" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="downPayment" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">BDT</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="DueAmount" class="control-label"></label>
-                <input asp-for="DueAmount" class="form-control" />
-                <span asp-validation-for="DueAmount" class="text-danger"></span>
+            <div class="col-md-6 col-md-offset-6">
+                <div class="form-group" id="dueAmountGroup">
+                    <label asp-for="Sale.DueAmount" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input id="dueAmount" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <span class="input-group-addon">BDT</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" id="installmentPeriodGroup" style="display:none">
+                    <label asp-for="Sale.InstallmentPeriod" class="control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                        <select id="installmentPeriod" class="form-control" asp-for="Sale.InstallmentPeriod">
+                            <option value="1">1 Month</option>
+                            <option value="2">2 Month</option>
+                            <option value="3">3 Month</option>
+                            <option value="4">4 Month</option>
+                            <option value="5">5 Month</option>
+                            <option value="6">6 Month</option>
+                            <option value="7">7 Month</option>
+                            <option value="8">8 Month</option>
+                            <option value="9">9 Month</option>
+                            <option value="10">10 Month</option>
+                            <option value="11">11 Month</option>
+                            <option value="12">12 Month</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TotalAmount" class="control-label"></label>
-                <input asp-for="TotalAmount" class="form-control" />
-                <span asp-validation-for="TotalAmount" class="text-danger"></span>
+            <div class="col-md-6 col-md-offset-6" id="showPaymentScheduleGroup" style="display:none;">
+                <button class="btn btn-link pull-right">Show Payment Schedule</button>
             </div>
-            <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <select asp-for="CustomerId" class ="form-control" asp-items="ViewBag.CustomerId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
+            @*<div class="col-md-12" id="paymentScheduleTable" style="display:none;>
+                <table class="table table-bordered table-responsive table-hover">
+                    <thead>
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Payment Date</th>
+                            <th>Payment Amount</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>*@
+            <div class="col-md-12"><hr /></div>
+            <div class="col-md-12"><button id="submitFrom" type="submit" class="btn btn-primary pull-right">Confirm Order</button></div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/Sales.js"></script>
 }

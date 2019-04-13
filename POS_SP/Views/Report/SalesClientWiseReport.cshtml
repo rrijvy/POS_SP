@@ -1,0 +1,57 @@
+﻿@model Sale
+@{
+    ViewData["Title"] = "SalesClientWiseReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2 class="alert alert-info">Client Wise Sales Report</h2>
+<div class="row">
+    <div class="col-md-12">
+        <form class="form-horizontal" action="GetClientWiseReport" method="post">
+            <div class="col-md-6 col-md-offset-6">
+                <div class="form-group">
+                    <label asp-for="CustomerId" class="control-label col-sm-3"></label>
+                    <div class="col-sm-8">
+                        <select id="clientId" asp-for="CustomerId" name="id" class="form-control" asp-items="ViewBag.CustomerId">
+                            <option value="0">Select client from here...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label col-sm-3">From Date:</label>
+                    <div class="col-sm-8">
+                        <input type="date" name="fromDate" class="form-control dateTimeNow" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label col-sm-3">To Date:</label>
+                    <div class="col-sm-8">
+                        <input type="date" name="toDate" class="form-control dateTimeNow" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12"><hr /></div>
+            <div class="col-md-12"><button type="submit" id="submitBtn" class="btn btn-primary col-md-offset-5" disabled>Show Report</button></div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        let clientId = document.querySelector('#clientId');
+        let submitBtn = document.querySelector('#submitBtn');
+        clientId.addEventListener('change', () => {
+            if (clientId.options[clientId.selectedIndex].value == 0) {
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+}
+

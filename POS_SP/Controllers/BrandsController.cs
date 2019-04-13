@@ -18,7 +18,7 @@ namespace POS_SP.Controllers
         
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Brand.ToListAsync());
+            return View(await _context.Brands.ToListAsync());
         }
         
         public async Task<IActionResult> Details(int? id)
@@ -28,7 +28,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var brand = await _context.Brand
+            var brand = await _context.Brands
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (brand == null)
             {
@@ -63,7 +63,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var brand = await _context.Brand.SingleOrDefaultAsync(m => m.Id == id);
+            var brand = await _context.Brands.SingleOrDefaultAsync(m => m.Id == id);
             if (brand == null)
             {
                 return NotFound();
@@ -110,7 +110,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var brand = await _context.Brand
+            var brand = await _context.Brands
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (brand == null)
             {
@@ -124,15 +124,15 @@ namespace POS_SP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var brand = await _context.Brand.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Brand.Remove(brand);
+            var brand = await _context.Brands.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Brands.Remove(brand);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BrandExists(int id)
         {
-            return _context.Brand.Any(e => e.Id == id);
+            return _context.Brands.Any(e => e.Id == id);
         }
     }
 }

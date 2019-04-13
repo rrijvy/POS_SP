@@ -18,7 +18,7 @@ namespace POS_SP.Controllers
         
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Supplier.ToListAsync());
+            return View(await _context.Suppliers.ToListAsync());
         }
         
         public async Task<IActionResult> Details(int? id)
@@ -28,7 +28,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Supplier
+            var supplier = await _context.Suppliers
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (supplier == null)
             {
@@ -63,7 +63,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Supplier.SingleOrDefaultAsync(m => m.Id == id);
+            var supplier = await _context.Suppliers.SingleOrDefaultAsync(m => m.Id == id);
             if (supplier == null)
             {
                 return NotFound();
@@ -110,7 +110,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Supplier
+            var supplier = await _context.Suppliers
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (supplier == null)
             {
@@ -124,15 +124,15 @@ namespace POS_SP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var supplier = await _context.Supplier.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Supplier.Remove(supplier);
+            var supplier = await _context.Suppliers.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Suppliers.Remove(supplier);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SupplierExists(int id)
         {
-            return _context.Supplier.Any(e => e.Id == id);
+            return _context.Suppliers.Any(e => e.Id == id);
         }
     }
 }

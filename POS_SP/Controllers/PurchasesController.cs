@@ -1,30 +1,56 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using POS_SP.Data;
 using POS_SP.Models;
+using POS_SP.Services;
 
 namespace POS_SP.Controllers
 {
     public class PurchasesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IStockService _stockService;
 
-        public PurchasesController(ApplicationDbContext context)
+        public PurchasesController(ApplicationDbContext context, IStockService stockService)
         {
             _context = context;
+            _stockService = stockService;
         }
-
-        // GET: Purchases
-        public async Task<IActionResult> Index()
+        
+        public async Task<IActionResult> Index(string currentFilter, string searching, int? page)
         {
-            var applicationDbContext = _context.Purchase.Include(p => p.Supplier);
-            return View(await applicationDbContext.ToListAsync());
-        }
+            if (searching != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searching = currentFilter;
+            }
 
-        // GET: Purchases/Details/5
+            ViewData["currentFilter"] = searching;
+
+            var purchase = _context.Purchases
+                .Include(s => s.Supplier)
+                .Include(x => x.PurchaseDetails)
+                .ThenInclude(x => x.Product)
+                .OrderByDescending(x => x.PurchaseDate)
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searching))
+            {
+                purchase = purchase.Where(e => e.OrderRefNo.Contains(searching) || e.Supplier.CompanyName.Contains(searching));
+            }
+
+            int pageSize = 10;
+
+            return View(await PaginatedList<Purchase>.CreateAsync(purchase.AsNoTracking(), page ?? 1, pageSize));
+        }
+        
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,7 +58,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var purchase = await _context.Purchase
+            var purchase = await _context.Purchases
                 .Include(p => p.Supplier)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (purchase == null)
@@ -42,32 +68,62 @@ namespace POS_SP.Controllers
 
             return View(purchase);
         }
-
-        // GET: Purchases/Create
+        
         public IActionResult Create()
         {
-            ViewData["SupplierId"] = new SelectList(_context.Set<Supplier>(), "Id", "Address1");
+            ViewData["SupplierId"] = new SelectList(_context.Set<Supplier>(), "Id", "CompanyName");
+            ViewData["CategoryId"] = new SelectList(_context.Set<Category>(), "Id", "Name");
             return View();
         }
 
-        // POST: Purchases/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PurchaseDate,OrderRefNo,SupplierId,OrderNo,LoadingBill,LabourCost,TaxPercent,TaxAmount,VatPercent,VatAmount,DiscountPercent,DiscountAmount,PaymentType,PaymentAmount,DueAmount,TotalAmount")] Purchase purchase)
+        public IActionResult Create(Purchase model)
         {
-            if (ModelState.IsValid)
+            var resultExist = _context.Purchases.Where(x => x.OrderRefNo == model.OrderRefNo).FirstOrDefault();
+
+            if (resultExist == null)
             {
-                _context.Add(purchase);
-                await _context.SaveChangesAsync();
+                Purchase purchase = new Purchase
+                {
+                    OrderNo = "P-" + DateTime.UtcNow.Millisecond,
+                    OrderRefNo = model.OrderRefNo,
+                    PurchaseDate = model.PurchaseDate,
+                    SupplierId = model.SupplierId,
+                    TaxPercent = model.TaxPercent,
+                    TaxAmount = model.TaxAmount,
+                    VatPercent = model.VatPercent,
+                    VatAmount = model.VatAmount,
+                    DiscountPercent = model.DiscountPercent,
+                    DiscountAmount = model.DiscountAmount,
+                    PaymentType = model.PaymentType,
+                    PaymentAmount = model.PaymentAmount,
+                    DueAmount = model.DueAmount,
+                    TotalAmount = model.TotalAmount
+                };
+                _context.Purchases.Add(purchase);
+                _context.SaveChanges();
+                foreach (var item in model.PurchaseDetails)
+                {
+                    PurchaseDetail purchaseDetail = new PurchaseDetail
+                    {
+                        PurchaseId = purchase.Id,
+                        ProductId = item.ProductId,
+                        UnitPrice = item.UnitPrice,
+                        UOM = item.UOM,
+                        Quantity = item.Quantity,
+                        IndividualTotal = item.IndividualTotal
+                    };
+                    _context.PurchaseDetails.Add(purchaseDetail);
+                    _context.SaveChanges();
+
+                    _stockService.StockMaintain(DateTime.Now.Date, item);
+                    _stockService.AddStockDetail("Purchase", item);
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SupplierId"] = new SelectList(_context.Set<Supplier>(), "Id", "Address1", purchase.SupplierId);
-            return View(purchase);
+            return View();
         }
 
-        // GET: Purchases/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,7 +131,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var purchase = await _context.Purchase.SingleOrDefaultAsync(m => m.Id == id);
+            var purchase = await _context.Purchases.SingleOrDefaultAsync(m => m.Id == id);
             if (purchase == null)
             {
                 return NotFound();
@@ -83,10 +139,7 @@ namespace POS_SP.Controllers
             ViewData["SupplierId"] = new SelectList(_context.Set<Supplier>(), "Id", "Address1", purchase.SupplierId);
             return View(purchase);
         }
-
-        // POST: Purchases/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,PurchaseDate,OrderRefNo,SupplierId,OrderNo,LoadingBill,LabourCost,TaxPercent,TaxAmount,VatPercent,VatAmount,DiscountPercent,DiscountAmount,PaymentType,PaymentAmount,DueAmount,TotalAmount")] Purchase purchase)
@@ -119,8 +172,7 @@ namespace POS_SP.Controllers
             ViewData["SupplierId"] = new SelectList(_context.Set<Supplier>(), "Id", "Address1", purchase.SupplierId);
             return View(purchase);
         }
-
-        // GET: Purchases/Delete/5
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,7 +180,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var purchase = await _context.Purchase
+            var purchase = await _context.Purchases
                 .Include(p => p.Supplier)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (purchase == null)
@@ -138,21 +190,20 @@ namespace POS_SP.Controllers
 
             return View(purchase);
         }
-
-        // POST: Purchases/Delete/5
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var purchase = await _context.Purchase.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Purchase.Remove(purchase);
+            var purchase = await _context.Purchases.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Purchases.Remove(purchase);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PurchaseExists(int id)
         {
-            return _context.Purchase.Any(e => e.Id == id);
+            return _context.Purchases.Any(e => e.Id == id);
         }
     }
 }

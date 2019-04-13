@@ -1,1 +1,5 @@
-﻿// Write your JavaScript code.
+﻿var now = new Date();
+var day = ("0" + now.getDate()).slice(-2);
+var month = ("0" + (now.getMonth() + 1)).slice(-2);
+var today = now.getFullYear() + "-" + month + "-" + day;
+$('.dateTimeNow').val(today);

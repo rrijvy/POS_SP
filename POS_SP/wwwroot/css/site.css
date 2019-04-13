@@ -6,8 +6,9 @@
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    width: 85%;
+    margin: auto;
+    padding: 0px 0px 0px 250px;
 }
 
 /* Carousel */
@@ -32,4 +33,23 @@
     .carousel-caption {
         display: none;
     }
+}
+
+.left-side {
+    width: 250px;
+    height: 100vh;
+    background-color: #222d32;
+    position: fixed;
+    top: 50px;
+    left: 0px;
+    z-index: 5002;
+}
+
+.right-side {
+    width: 100%;
+    position: absolute;
+}
+
+.sidebar-menu li a{
+    text-decoration: none;
 }

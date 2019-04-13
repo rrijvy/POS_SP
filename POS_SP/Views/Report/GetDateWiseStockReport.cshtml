@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Stock>
+@{
+    ViewData["Title"] = "GetDateWiseStockReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int serialNo = 0;
+}
+
+<h2 class="alert alert-info">Get Date Wise Stock Report</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-bordered table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Product</th>
+                    <th>Last Updated Date</th>
+                    <th>Unit</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    serialNo++;
+                    <tr>
+                        <td>@serialNo</td>
+                        <td>@item.Product.Name</td>
+                        <td>@item.StockDate.ToString("dd/MM/yyyy")</td>
+                        <td>@item.UOM</td>
+                        <td>@item.Quantity</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-primary" onclick="javascript:print()">Print Report</button>
+        <a href="/Report/DateWiseStockReport" class="btn btn-primary">Generate Another Report</a>
+    </div>
+</div>

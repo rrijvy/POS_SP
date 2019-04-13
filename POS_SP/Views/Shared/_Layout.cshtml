@@ -6,14 +6,26 @@
     <title>@ViewData["Title"] - POS_SP</title>
 
     <environment include="Development">
+        <link href="~/lib/sidebar/sidebar-menu.css" rel="stylesheet" />
+        <link href="~/lib/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" 
+              href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" 
+              integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" 
+              crossorigin="anonymous" />
     </environment>
     <environment exclude="Development">
+        <link href="~/lib/sidebar/sidebar-menu.css" rel="stylesheet" />
+        <link href="~/lib/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet"
+              href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+              integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+              crossorigin="anonymous" />
     </environment>
 </head>
 <body>
@@ -38,18 +50,99 @@
             </div>
         </div>
     </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2019 - POS_SP</p>
-        </footer>
+    <div class="left-side">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#">
+                    <i class="fa fa-laptop"></i>
+                    <span>General</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="/Customers/Index"><i class="fa fa-circle-o"></i> Customers</a></li>
+                    <li><a href="/Suppliers/Index"><i class="fa fa-circle-o"></i> Suppliers</a></li>
+                    <li><a href="/Categories/Index"><i class="fa fa-circle-o"></i> Categories</a></li>
+                    <li><a href="/SubCategories/Index"><i class="fa fa-circle-o"></i> Sub Categories</a></li>
+                    <li><a href="/Brands/Index"><i class="fa fa-circle-o"></i> Brands</a></li>
+                    <li><a href="/Products/Index"><i class="fa fa-circle-o"></i> Products</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-laptop"></i>
+                    <span>Purchase Management</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="/purchases/Index"><i class="fa fa-circle-o"></i> Purchase List</a></li>
+                    <li><a href="/purchases/Create"><i class="fa fa-circle-o"></i> Purchase Products</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-laptop"></i>
+                    <span>Sales Management</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="/Sales/Index"><i class="fa fa-circle-o"></i> Sales List</a></li>
+                    <li><a href="/Sales/Create"><i class="fa fa-circle-o"></i> Sale Products</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-share"></i> <span>Report Management</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="#"><i class="fa fa-circle-o"></i> Purchase Report <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="/Report/DateWisePurchaseReport"><i class="fa fa-circle-o"></i> Date Wise Report</a></li>
+                            <li><a href="/Report/PurchaseProductReport"><i class="fa fa-circle-o"></i> Product Wise Report</a></li>
+                            <li><a href="/Report/SupplierWisePurchaseReport"><i class="fa fa-circle-o"></i> Supplier Wise Report</a></li>
+                            <li><a href="/Report/CategoryWisePurchaseReport"><i class="fa fa-circle-o"></i> Category Wise Report</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-circle-o"></i> Sales Report <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="/Report/DateWiseSalesReport"><i class="fa fa-circle-o"></i> Date Wise Report</a></li>
+                            <li><a href="/Report/SalesProductWiseReport"><i class="fa fa-circle-o"></i> Product Wise Report</a></li>
+                            <li><a href="/Report/SalesClientWiseReport"><i class="fa fa-circle-o"></i> Client Wise Report</a></li>
+                            <li><a href="/Report/CategoryWiseSalesReport"><i class="fa fa-circle-o"></i> Category Wise Report</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-circle-o"></i> Stock Report <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="/Report/CurrentStockReport"><i class="fa fa-circle-o"></i> Current Stock Report</a></li>
+                            <li><a href="/Report/DateWiseStockReport"><i class="fa fa-circle-o"></i> Date Wise Stock Report</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="right-side">
+        <div class="body-content">
+            @RenderBody()
+            <hr />
+            <footer class="alert alert-info text-center">
+                <p>&copy; 2019 - Point Of Sale</p>
+            </footer>
+        </div>
     </div>
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-ui-1.12.1/jquery-ui.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/lib/sidebar/sidebar-menu.js"></script>
+        <script>
+            $.sidebarMenu($('.sidebar-menu'));
+        </script>
     </environment>
     <environment exclude="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
@@ -58,6 +151,7 @@
                 crossorigin="anonymous"
                 integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
         </script>
+        <script src="~/lib/jquery-ui-1.12.1/jquery-ui.js"></script>
         <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
                 asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
@@ -65,6 +159,10 @@
                 integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/lib/sidebar/sidebar-menu.js"></script>
+        <script>
+            $.sidebarMenu($('.sidebar-menu'));
+        </script>
     </environment>
 
     @RenderSection("Scripts", required: false)

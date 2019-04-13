@@ -18,7 +18,7 @@ namespace POS_SP.Controllers
         
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.ToListAsync());
+            return View(await _context.Categories.ToListAsync());
         }
         
         public async Task<IActionResult> Details(int? id)
@@ -28,7 +28,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
+            var category = await _context.Categories
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
@@ -63,7 +63,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category.SingleOrDefaultAsync(m => m.Id == id);
+            var category = await _context.Categories.SingleOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -110,7 +110,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
+            var category = await _context.Categories
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
@@ -124,15 +124,15 @@ namespace POS_SP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Category.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Category.Remove(category);
+            var category = await _context.Categories.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoryExists(int id)
         {
-            return _context.Category.Any(e => e.Id == id);
+            return _context.Categories.Any(e => e.Id == id);
         }
     }
 }

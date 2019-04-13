@@ -20,7 +20,7 @@ namespace POS_SP.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Product.Include(p => p.Brand).Include(p => p.SubCategory);
+            var applicationDbContext = _context.Products.Include(p => p.Brand).Include(p => p.SubCategory);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -32,7 +32,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            var product = await _context.Products
                 .Include(p => p.Brand)
                 .Include(p => p.SubCategory)
                 .SingleOrDefaultAsync(m => m.Id == id);
@@ -47,7 +47,7 @@ namespace POS_SP.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id");
+            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Name");
             ViewData["SubCategoryId"] = new SelectList(_context.Set<SubCategory>(), "Id", "Name");
             return View();
         }
@@ -65,7 +65,7 @@ namespace POS_SP.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id", product.BrandId);
+            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Id", product.BrandId);
             ViewData["SubCategoryId"] = new SelectList(_context.Set<SubCategory>(), "Id", "Name", product.SubCategoryId);
             return View(product);
         }
@@ -78,12 +78,12 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.SingleOrDefaultAsync(m => m.Id == id);
+            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id", product.BrandId);
+            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Id", product.BrandId);
             ViewData["SubCategoryId"] = new SelectList(_context.Set<SubCategory>(), "Id", "Name", product.SubCategoryId);
             return View(product);
         }
@@ -120,7 +120,7 @@ namespace POS_SP.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id", product.BrandId);
+            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Id", product.BrandId);
             ViewData["SubCategoryId"] = new SelectList(_context.Set<SubCategory>(), "Id", "Name", product.SubCategoryId);
             return View(product);
         }
@@ -133,7 +133,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            var product = await _context.Products
                 .Include(p => p.Brand)
                 .Include(p => p.SubCategory)
                 .SingleOrDefaultAsync(m => m.Id == id);
@@ -150,15 +150,15 @@ namespace POS_SP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Product.Remove(product);
+            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Products.Any(e => e.Id == id);
         }
     }
 }

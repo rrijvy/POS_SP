@@ -1,30 +1,54 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using POS_SP.Data;
 using POS_SP.Models;
+using POS_SP.Services;
 
 namespace POS_SP.Controllers
 {
     public class SalesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IStockService _stockService;
 
-        public SalesController(ApplicationDbContext context)
+        public SalesController(ApplicationDbContext context, IStockService stockService)
         {
             _context = context;
+            _stockService = stockService;
         }
-
-        // GET: Sales
-        public async Task<IActionResult> Index()
+        
+        public async Task<IActionResult> Index(string currentFilter, string searching, int? page)
         {
-            var applicationDbContext = _context.Sale.Include(s => s.Customer);
-            return View(await applicationDbContext.ToListAsync());
-        }
+            if (searching != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searching = currentFilter;
+            }
+            ViewData["currentFilter"] = searching;
 
-        // GET: Sales/Details/5
+            var sale = _context.Sales
+                .Include(s => s.Customer)
+                .Include(x => x.SalesDetails)
+                .ThenInclude(x => x.Product)
+                .OrderByDescending(x => x.SalesDate)
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searching))
+            {
+                sale = sale.Where(e => e.OrderRefNo.Contains(searching) || e.Customer.Name.Contains(searching));
+            }
+
+            int pageSize = 10;
+            return View(await PaginatedList<Sale>.CreateAsync(sale.AsNoTracking(), page ?? 1, pageSize));
+        }
+        
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,7 +56,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sale
+            var sale = await _context.Sales
                 .Include(s => s.Customer)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (sale == null)
@@ -42,32 +66,62 @@ namespace POS_SP.Controllers
 
             return View(sale);
         }
-
-        // GET: Sales/Create
+        
         public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Set<Customer>(), "Id", "Address1");
+            ViewData["CustomerId"] = new SelectList(_context.Set<Customer>(), "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(_context.Set<Category>(), "Id", "Name");
             return View();
         }
 
-        // POST: Sales/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,OrderNumber,OrderRefNo,SalesDate,TaxAmount,TaxPercent,VatAmount,VatPercent,DiscountAmount,DiscountPercent,PaymentType,PaymentAmount,DueAmount,TotalAmount,CustomerId")] Sale sale)
+        public IActionResult Create(Sale model)
         {
-            if (ModelState.IsValid)
+            var resultExist = _context.Sales.Where(x => x.OrderRefNo == model.OrderRefNo).FirstOrDefault();
+
+            if (resultExist == null)
             {
-                _context.Add(sale);
-                await _context.SaveChangesAsync();
+                Sale sale = new Sale
+                {
+                    OrderNumber = "S-" + DateTime.UtcNow.Millisecond,
+                    OrderRefNo = model.OrderRefNo,
+                    SalesDate = model.SalesDate,
+                    CustomerId = model.CustomerId,
+                    TaxPercent = model.TaxPercent,
+                    TaxAmount = model.TaxAmount,
+                    VatPercent = model.VatPercent,
+                    VatAmount = model.VatAmount,
+                    DiscountPercent = model.DiscountPercent,
+                    DiscountAmount = model.DiscountAmount,
+                    PaymentType = model.PaymentType,
+                    PaymentAmount = model.PaymentAmount,
+                    DueAmount = model.DueAmount,
+                    TotalAmount = model.TotalAmount
+                };
+                _context.Sales.Add(sale);
+                _context.SaveChanges();
+                foreach (var item in model.SalesDetails)
+                {
+                    SalesDetail salesDetail = new SalesDetail
+                    {
+                        SaleId = sale.Id,
+                        ProductId = item.ProductId,
+                        UnitPrice = item.UnitPrice,
+                        UOM = item.UOM,
+                        Quantity = item.Quantity,
+                        IndividualTotal = item.IndividualTotal
+                    };
+                    _context.SalesDetails.Add(salesDetail);
+                    _context.SaveChanges();
+
+                    _stockService.StockMaintain(DateTime.Now.Date, item);
+                    _stockService.AddStockDetail("Sales", item);
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Set<Customer>(), "Id", "Address1", sale.CustomerId);
-            return View(sale);
+            return View();
         }
 
-        // GET: Sales/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,7 +129,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sale.SingleOrDefaultAsync(m => m.Id == id);
+            var sale = await _context.Sales.SingleOrDefaultAsync(m => m.Id == id);
             if (sale == null)
             {
                 return NotFound();
@@ -83,10 +137,7 @@ namespace POS_SP.Controllers
             ViewData["CustomerId"] = new SelectList(_context.Set<Customer>(), "Id", "Address1", sale.CustomerId);
             return View(sale);
         }
-
-        // POST: Sales/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,OrderNumber,OrderRefNo,SalesDate,TaxAmount,TaxPercent,VatAmount,VatPercent,DiscountAmount,DiscountPercent,PaymentType,PaymentAmount,DueAmount,TotalAmount,CustomerId")] Sale sale)
@@ -119,8 +170,7 @@ namespace POS_SP.Controllers
             ViewData["CustomerId"] = new SelectList(_context.Set<Customer>(), "Id", "Address1", sale.CustomerId);
             return View(sale);
         }
-
-        // GET: Sales/Delete/5
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,7 +178,7 @@ namespace POS_SP.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sale
+            var sale = await _context.Sales
                 .Include(s => s.Customer)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (sale == null)
@@ -139,20 +189,19 @@ namespace POS_SP.Controllers
             return View(sale);
         }
 
-        // POST: Sales/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sale = await _context.Sale.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Sale.Remove(sale);
+            var sale = await _context.Sales.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Sales.Remove(sale);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SaleExists(int id)
         {
-            return _context.Sale.Any(e => e.Id == id);
+            return _context.Sales.Any(e => e.Id == id);
         }
     }
 }

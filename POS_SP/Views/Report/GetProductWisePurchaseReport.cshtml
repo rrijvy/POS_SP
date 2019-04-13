@@ -1,0 +1,42 @@
+﻿@model IEnumerable<PurchaseDetail>
+@{
+    ViewData["Title"] = "PurchaseReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int serialNo = 0;
+}
+
+<h2 class="alert alert-info">Product Wise Purchase Report</h2>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Sl No.</th>
+                    <th>Purchase Date</th>
+                    <th>Supplier</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Unit</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    serialNo++;
+                    <tr>
+                        <td>@serialNo</td>
+                        <td>@item.Purchase.PurchaseDate.ToString("dd/MM/yyyy")</td>
+                        <td>@item.Purchase.Supplier.CompanyName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice</td>
+                        <td>@item.UOM</td>
+                        <td>@item.IndividualTotal</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-primary" onclick="javascript:print()">Print Report</button>
+        <a href="/Report/PurchaseProductReport" class="btn btn-primary">Generate Another Report</a>
+    </div>
+</div>

@@ -5,6 +5,7 @@
         Cash,
         CreditCard,
         BKash,
-        Rocket
+        Rocket,
+        EMI
     };
 }

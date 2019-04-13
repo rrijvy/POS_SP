@@ -1,0 +1,46 @@
+﻿@model IEnumerable<SalesDetail>
+@{
+    ViewData["Title"] = "GetCategoryWiseSalesReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int serialNo = 0;
+}
+
+<h2 class="alert alert-info">Category Wise Sales Report</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Sl No.</th>
+                    <th>Sales Date</th>
+                    <th>Client</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>UOM</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    serialNo++;
+                    <tr>
+                        <td>@serialNo</td>
+                        <td>@item.Sale.SalesDate.ToString("dd/MM/yyyy")</td>
+                        <td>@item.Sale.Customer.Name</td>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice</td>
+                        <td>@item.UOM</td>
+                        <td>@item.IndividualTotal</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-primary" onclick="javascript:print()">Print Report</button>
+        <a href="/Report/CategoryWiseSalesReport" class="btn btn-primary">Generate Another Report</a>
+    </div>
+</div>
+

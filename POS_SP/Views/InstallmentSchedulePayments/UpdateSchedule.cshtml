@@ -1,0 +1,51 @@
+﻿@model IEnumerable<InstallmentSchedulePayment>
+@{
+    ViewData["Title"] = "UpdateSchedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int serialNo = 0;
+}
+
+<h2 class="alert alert-info">Installment Schedule</h2>
+<div class="row">
+    <div class="col-md-12">
+        <form class="form-inline" method="post" asp-controller="InstallmentSchedulePayments" asp-action="UpdateSchedule">
+            <div class="form-group">
+                <label class="control-label">Sales Number: </label>
+                <input name="id" type="text" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <hr />
+        <div>
+            <table class="table table-bordered table-responsive table-hover">
+                <thead>
+                    <tr>
+                        <th>SL No.</th>
+                        <th>Schedule Date</th>
+                        <th>Amount</th>
+                        <th>Payment Date</th>
+                        <th>Paid Amount</th>
+                        <th>Fine Amount</th>
+                        <th>Due Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        ++serialNo;
+                        <tr>
+                            <td>@serialNo</td>
+                            <td>@item.ScheduleDate</td>
+                            <td>@item.ScheduleAmount</td>
+                            <td>@item.PaymentDate</td>
+                            <td>@item.PaidAmount</td>
+                            <td>@item.FineAmount</td>
+                            <td>@item.DueAmount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

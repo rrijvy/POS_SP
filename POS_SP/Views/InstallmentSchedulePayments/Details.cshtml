@@ -1,0 +1,73 @@
+﻿@model POS_SP.Models.InstallmentSchedulePayment
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>InstallmentSchedulePayment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ScheduleDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ScheduleDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ScheduleAmount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ScheduleAmount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PaymentDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PaymentDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PaidAmount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PaidAmount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FineAmount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FineAmount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DueAmount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DueAmount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalPaid)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TotalPaid)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalDue)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TotalDue)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SalesId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SalesId)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

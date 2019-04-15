@@ -229,26 +229,27 @@
                     <label asp-for="Sale.InstallmentPeriod" class="control-label col-sm-4"></label>
                     <div class="col-sm-8">
                         <select id="installmentPeriod" class="form-control" asp-for="Sale.InstallmentPeriod">
-                            <option value="1">1 Month</option>
-                            <option value="2">2 Month</option>
+                            <option value="0">Select Month</option>
                             <option value="3">3 Month</option>
-                            <option value="4">4 Month</option>
-                            <option value="5">5 Month</option>
                             <option value="6">6 Month</option>
-                            <option value="7">7 Month</option>
-                            <option value="8">8 Month</option>
                             <option value="9">9 Month</option>
-                            <option value="10">10 Month</option>
-                            <option value="11">11 Month</option>
                             <option value="12">12 Month</option>
+                            <option value="15">15 Month</option>
+                            <option value="18">18 Month</option>
+                            <option value="21">21 Month</option>
+                            <option value="24">24 Month</option>
+                            <option value="27">27 Month</option>
+                            <option value="30">30 Month</option>
+                            <option value="33">33 Month</option>
+                            <option value="36">36 Month</option>
                         </select>
                     </div>
                 </div>
             </div>
             <div class="col-md-6 col-md-offset-6" id="showPaymentScheduleGroup" style="display:none;">
-                <button class="btn btn-link pull-right">Show Payment Schedule</button>
+                <button id="showPaymentSchedule" class="btn btn-success pull-right">Show Payment Schedule</button>
             </div>
-            @*<div class="col-md-12" id="paymentScheduleTable" style="display:none;>
+            <div class="col-md-12" id="paymentScheduleTable" title="Payment Schedule">
                 <table class="table table-bordered table-responsive table-hover">
                     <thead>
                         <tr>
@@ -257,15 +258,47 @@
                             <th>Payment Amount</th>
                         </tr>
                     </thead>
+                    <tbody id="paymentScheduleTableBody">
+                    </tbody>
                 </table>
-            </div>*@
+            </div>
             <div class="col-md-12"><hr /></div>
             <div class="col-md-12"><button id="submitFrom" type="submit" class="btn btn-primary pull-right">Confirm Order</button></div>
         </form>
     </div>
 </div>
+<div id="snackbar">Please fill up all the form.</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/Sales.js"></script>
+    <script>
+        $(function () {
+            $("#paymentScheduleTable").dialog({
+                width: "auto",
+                modal: true,
+                resizable: false,
+                autoOpen: false,
+                show: {
+                    effect: "fade",
+                    duration: 500
+                },
+                hide: {
+                    effect: "fade",
+                    duration: 500
+                }
+            });
+
+            $("#showPaymentSchedule").on("click", function () {
+                if ($("#installmentPeriod").val() != 0) {
+                    $("#paymentScheduleTable").dialog("open");
+                } else {
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+                }
+                
+            });
+        });
+    </script>
 }

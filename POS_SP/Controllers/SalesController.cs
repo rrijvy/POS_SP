@@ -94,8 +94,10 @@ namespace POS_SP.Controllers
                     DiscountPercent = model.DiscountPercent,
                     DiscountAmount = model.DiscountAmount,
                     PaymentType = model.PaymentType,
+                    DownPayment = model.DownPayment,
                     PaymentAmount = model.PaymentAmount,
                     DueAmount = model.DueAmount,
+                    InstallmentPeriod = model.InstallmentPeriod,
                     TotalAmount = model.TotalAmount
                 };
                 _context.Sales.Add(sale);
@@ -116,6 +118,23 @@ namespace POS_SP.Controllers
 
                     _stockService.StockMaintain(DateTime.Now.Date, item);
                     _stockService.AddStockDetail("Sales", item);
+                }
+                foreach (var item in model.InstallmentSchedulePayments)
+                {
+                    InstallmentSchedulePayment installment = new InstallmentSchedulePayment
+                    {
+                        ScheduleDate = item.ScheduleDate,
+                        ScheduleAmount = item.ScheduleAmount,
+                        PaymentDate = DateTime.MinValue,
+                        PaidAmount = 0,
+                        FineAmount = 0,
+                        DueAmount = item.ScheduleAmount,
+                        TotalPaid = sale.DownPayment,
+                        TotalDue = sale.TotalAmount - sale.DownPayment,
+                        SalesId = sale.Id
+                    };
+                    _context.InstallmentSchedulePayments.Add(installment);
+                    _context.SaveChanges();
                 }
                 return RedirectToAction(nameof(Index));
             }

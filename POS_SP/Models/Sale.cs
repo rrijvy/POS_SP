@@ -64,5 +64,7 @@ namespace POS_SP.Models
         public Customer Customer { get; set; }
 
         public List<SalesDetail> SalesDetails { get; set; }
+
+        public List<InstallmentSchedulePayment> InstallmentSchedulePayments { get; set; }
     }
 }

@@ -27,7 +27,9 @@
     paymentAmount: document.querySelector('#paymentAmount'),
     downPayment: document.querySelector('#downPayment'),
     dueAmount: document.querySelector('#dueAmount'),
-    installmentPeriod: document.querySelector('#installmentPeriod')
+    installmentPeriod: document.querySelector('#installmentPeriod'),
+    paymentScheduleTableBody: document.querySelector('#paymentScheduleTableBody'),
+    showPaymentSchedule: document.querySelector('#showPaymentSchedule')
 };
 function clearInputs() {
     selectors.categoryId.options[selectors.categoryId.selectedIndex].value = 0;
@@ -44,6 +46,7 @@ function clearInputs() {
     selectors.taxTaka.value = null;
 }
 let orderedProducts = [];
+let installments = [];
 let subTotalAmount = 0;
 let totalAmount = 0;
 function getTotalAmount(subTotal, tax, vat, discount) {
@@ -280,7 +283,9 @@ selectors.submitFrom.addEventListener('click', e => {
             paymentAmount: selectors.paymentAmount.value,
             dueAmount: selectors.dueAmount.value,
             downPayment: selectors.downPayment.value,
-            salesDetails: orderedProducts
+            installmentPeriod: selectors.installmentPeriod.options[selectors.installmentPeriod.selectedIndex].value,
+            salesDetails: orderedProducts,
+            installmentSchedulePayments: installments
         };
         $.ajax({
             type: 'POST',
@@ -460,16 +465,29 @@ selectors.paymentType.addEventListener('change', e => {
         $('#downPaymentAmountGroup').show();
         $('#installmentPeriodGroup').show();
         $('#showPaymentScheduleGroup').show();
-    }    
+    }
 });
 selectors.installmentPeriod.addEventListener('change', e => {
-    let istallmentSchedules = [];
+    installments = [];
+    selectors.paymentScheduleTableBody.innerHTML = " ";
     let period = selectors.installmentPeriod.options[selectors.installmentPeriod.selectedIndex].value;
-    let scheduleAmount = getTotalAmount(subTotalAmount, selectors.taxTaka.value, selectors.vatTaka.value, selectors.discountTaka.value)/6;
-    for (let i = 0; i < period.length; i++) {
-        let installmentSchedule = {
-
-        }
+    let totalAmount = getTotalAmount(subTotalAmount, selectors.taxTaka.value, selectors.vatTaka.value, selectors.discountTaka.value);
+    let scheduleAmount = (Number(totalAmount) - Number(selectors.downPayment.value)) / period;
+    let date = new Date();
+    for (var i = 1; i <= period; i++) {
+        let day = ("0" + date.getDate(date.setDate(10))).slice(-2);
+        var month = ("0" + (date.getMonth() + (i+1))).slice(-2);
+        var scheduleDate = date.getFullYear() + "-" + month + "-" + day;
+        let installment = {
+            scheduleDate: scheduleDate,
+            scheduleAmount: scheduleAmount
+        };
+        let tableRow = `<tr>
+                            <td>${i}</td>
+                            <td>${installment.scheduleDate}</td>
+                            <td>${installment.scheduleAmount}</td>
+                        </tr>`;
+        selectors.paymentScheduleTableBody.insertAdjacentHTML('beforeend', tableRow);
+        installments.push(installment);
     }
-    
 });

@@ -3,6 +3,7 @@
     ViewData["Title"] = "UpdateSchedule";
     Layout = "~/Views/Shared/_Layout.cshtml";
     int serialNo = 0;
+    double scheduleAmount = 0;
 }
 
 <h2 class="alert alert-info">Installment Schedule</h2>
@@ -34,18 +35,82 @@
                     @foreach (var item in Model)
                     {
                         ++serialNo;
-                        <tr>
-                            <td>@serialNo</td>
-                            <td>@item.ScheduleDate</td>
-                            <td>@item.ScheduleAmount</td>
-                            <td>@item.PaymentDate</td>
-                            <td>@item.PaidAmount</td>
-                            <td>@item.FineAmount</td>
-                            <td>@item.DueAmount</td>
-                        </tr>
+                        scheduleAmount = item.ScheduleAmount;
+                    <tr>
+                        <td>@serialNo</td>
+                        <td>@item.ScheduleDate.ToString("dd-MM-yyyy")</td>
+                        <td>@item.ScheduleAmount</td>
+                        @if (item.PaymentDate == DateTime.MinValue)
+                        {
+                            <td>Not Paid</td>
+                        }
+                        else
+                        {
+                            <td>@item.PaymentDate.ToString("dd-MM-yyyy")</td>
+                        }
+                        <td>@item.PaidAmount</td>
+                        <td>@item.FineAmount</td>
+                        <td>@item.DueAmount</td>
+                        @if (item.IsPaid == true)
+                        {
+                            <td><button class="btn btn-link" disabled>Paid</button></td>
+                        }
+                        else
+                        {
+                            <td><button class="btn btn-link payNow" value="@item.Id">Pay Now</button></td>
+                        }
+
+                    </tr>
                     }
                 </tbody>
             </table>
         </div>
+        <div  class="col-md-6" id="payNowForm" title="Installment Payment Form">
+            <form id="payForm" class="form" method="post" asp-controller="InstallmentSchedulePayments" asp-action="PayInstallment">
+                <div class="form-group">
+                    <label class="control-label">Date </label>
+                    <input name="paymentDate" type="date" class="form-control dateTimeNow">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Amount </label>
+                    <input name="paidAmount" type="number" class="form-control" value="@scheduleAmount">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Fine </label>
+                    <input name="fineAmount" type="number" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </div>
 </div>
+
+@section Scripts{ 
+    <script>
+        $("#payNowForm").dialog({
+            width: "auto",
+            modal: true,
+            resizable: false,
+            autoOpen: false,
+            show: {
+                effect: "fade",
+                duration: 500
+            },
+            hide: {
+                effect: "fade",
+                duration: 500
+            }
+        });
+
+        $('.payNow').on('click', function () {
+            let id = $(this).val();
+            console.log(id);
+            $('<input>')
+                .attr('type', 'hidden')
+                .attr('value', id)
+                .attr('name', 'id')
+                .appendTo('#payForm');
+            $("#payNowForm").dialog("open");
+        });
+    </script>
+}

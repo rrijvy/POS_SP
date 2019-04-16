@@ -155,7 +155,7 @@ namespace POS_SP.Controllers
         {
             return View();
         }
-        
+
         public IActionResult UpdateSchedule(int id)
         {
             var result = _context.InstallmentSchedulePayments
@@ -169,6 +169,22 @@ namespace POS_SP.Controllers
             }
 
             return View(result);
+        }
+
+        [HttpPost]
+        public IActionResult PayInstallment(int id, DateTime paymentDate, double paidAmount, double fineAmount)
+        {
+            var schedule = _context.InstallmentSchedulePayments.Find(id);
+            schedule.PaymentDate = paymentDate;
+            schedule.PaidAmount = paidAmount;
+            schedule.FineAmount = fineAmount;
+            schedule.DueAmount = schedule.DueAmount - paidAmount;
+            schedule.TotalPaid = schedule.TotalPaid + paidAmount;
+            schedule.TotalDue = schedule.TotalDue - paidAmount;
+            schedule.IsPaid = true;
+            _context.InstallmentSchedulePayments.Update(schedule);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(UpdateSchedule), new { id = schedule.SalesId });
         }
     }
 }

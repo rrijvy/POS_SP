@@ -480,7 +480,7 @@ selectors.installmentPeriod.addEventListener('change', e => {
         var scheduleDate = date.getFullYear() + "-" + month + "-" + day;
         let installment = {
             scheduleDate: scheduleDate,
-            scheduleAmount: scheduleAmount
+            scheduleAmount: Math.ceil(scheduleAmount)
         };
         let tableRow = `<tr>
                             <td>${i}</td>
@@ -489,5 +489,12 @@ selectors.installmentPeriod.addEventListener('change', e => {
                         </tr>`;
         selectors.paymentScheduleTableBody.insertAdjacentHTML('beforeend', tableRow);
         installments.push(installment);
+    }
+});
+selectors.downPayment.addEventListener('change', e => {
+    e.preventDefault();
+    let downPayment = selectors.downPayment.value;    
+    if (downPayment > 0) {
+        selectors.installmentPeriod.disabled = false;
     }
 });

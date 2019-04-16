@@ -7,6 +7,8 @@ namespace POS_SP.Models
     {
         public int Id { get; set; }
 
+        public bool IsPaid { get; set; }
+
         [Display(Name = "Schedule Date"), DataType(DataType.Date)]
         public DateTime ScheduleDate { get; set; }
 

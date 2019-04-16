@@ -209,7 +209,7 @@
                     <label asp-for="Sale.DownPayment" class="control-label col-sm-4"></label>
                     <div class="col-sm-8">
                         <div class="input-group">
-                            <input id="downPayment" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <input id="downPayment" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)" >
                             <span class="input-group-addon">BDT</span>
                         </div>
                     </div>
@@ -220,7 +220,7 @@
                     <label asp-for="Sale.DueAmount" class="control-label col-sm-4"></label>
                     <div class="col-sm-8">
                         <div class="input-group">
-                            <input id="dueAmount" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)">
+                            <input id="dueAmount" type="number" class="form-control" aria-label="Amount (rounded to the nearest dollar)" >
                             <span class="input-group-addon">BDT</span>
                         </div>
                     </div>
@@ -228,7 +228,7 @@
                 <div class="form-group" id="installmentPeriodGroup" style="display:none">
                     <label asp-for="Sale.InstallmentPeriod" class="control-label col-sm-4"></label>
                     <div class="col-sm-8">
-                        <select id="installmentPeriod" class="form-control" asp-for="Sale.InstallmentPeriod">
+                        <select id="installmentPeriod" class="form-control" asp-for="Sale.InstallmentPeriod" disabled>
                             <option value="0">Select Month</option>
                             <option value="3">3 Month</option>
                             <option value="6">6 Month</option>
@@ -299,6 +299,8 @@
                 }
                 
             });
+
+
         });
     </script>
 }
